@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PO Freight Split Calculator</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f9fafb;
+      margin: 2rem auto;
+      max-width: 400px;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; margin-bottom: 1.5rem; }
+    label { display: block; margin-top: 1rem; font-weight: 500; }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover { background: #1d4ed8; }
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.25rem;
+      text-align: center;
+      background: #eef2ff;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>PO Freight Split Calculator</h2>
+
+  <label for="totalTax">Total Tax on PO ($):</label>
+  <input id="totalTax" type="number" step="0.01" placeholder="e.g. 45.50" />
+
+  <label for="salesTax">Sales Tax on Invoice ($):</label>
+  <input id="salesTax" type="number" step="0.01" placeholder="e.g. 180.00" />
+
+  <label for="freightInvoice">Total Freight on Invoice ($):</label>
+  <input id="freightInvoice" type="number" step="0.01" placeholder="e.g. 120.00" />
+
+  <button onclick="calculateFreight()">Calculate Freight for PO</button>
+
+  <div class="result" id="result">Freight for PO: $0.00</div>
+
+  <script>
+    function calculateFreight() {
+      const totalTax = parseFloat(document.getElementById('totalTax').value) || 0;
+      const salesTax = parseFloat(document.getElementById('salesTax').value) || 0;
+      const freightInvoice = parseFloat(document.getElementById('freightInvoice').value) || 0;
+
+      if (salesTax <= 0) {
+        document.getElementById('result').innerText = '⚠️ Please enter a valid Sales Tax amount.';
+        return;
+      }
+
+      const freightForPO = (totalTax / salesTax) * freightInvoice;
+      document.getElementById('result').innerText =
+        'Freight for PO: $' + freightForPO.toFixed(2);
+    }
+  </script>
+</body>
+</html>
