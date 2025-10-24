@@ -59,6 +59,7 @@
   <input id="freightInvoice" type="number" step="0.01" placeholder="e.g. 120.00" />
 
   <button onclick="calculateFreight()">Calculate Freight for PO</button>
+  <div class="result" id="result">Freight for PO: $0.0000</div>
 
   <h3 style="margin-top:1.5rem;">Check your totals!</h3>
   <p style="margin-top:0.25rem; margin-bottom:0.75rem; font-size:0.95rem; color:#374151;">Paste numbers (one per line or comma-separated). Use the three boxes below for PO totals, Tax totals, and Freight totals, then click the buttons to sum.</p>
@@ -80,8 +81,6 @@
 
   <button style="background:#10b981; margin-top:1rem;" onclick="checkAll()">Check all totals</button>
   <div class="result" id="totalsResult" style="background:#ecfdf5; white-space:pre-wrap;">Combined Results will appear here.</div>
-
-  <div class="result" id="result">Freight for PO: $0.0000</div>
 
   <script>
     // Parse a pasted blob of text into numbers. Accepts newlines, commas, semicolons, spaces.
