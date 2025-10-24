@@ -60,9 +60,69 @@
 
   <button onclick="calculateFreight()">Calculate Freight for PO</button>
 
-  <div class="result" id="result">Freight for PO: $0.00</div>
+  <h3 style="margin-top:1.5rem;">Check your totals!</h3>
+  <p style="margin-top:0.25rem; margin-bottom:0.75rem; font-size:0.95rem; color:#374151;">Paste numbers (one per line or comma-separated). Use the three boxes below for PO totals, Tax totals, and Freight totals, then click the buttons to sum.</p>
+
+  <label for="poTotals">PO Totals (paste values):</label>
+  <textarea id="poTotals" placeholder="e.g. 120.00\n45.50\n30.00" rows="4" style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:0.5rem; font-size:1rem;"></textarea>
+  <button onclick="sumAndShow('poTotals','poSum')">Sum PO Totals</button>
+  <div class="result" id="poSum">PO Total: $0.0000</div>
+
+  <label for="taxTotals">Tax Totals (paste values):</label>
+  <textarea id="taxTotals" placeholder="e.g. 15.25, 20.00, 10" rows="4" style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:0.5rem; font-size:1rem;"></textarea>
+  <button onclick="sumAndShow('taxTotals','taxSum')">Sum Tax Totals</button>
+  <div class="result" id="taxSum">Tax Total: $0.0000</div>
+
+  <label for="freightTotals">Freight Totals (paste values):</label>
+  <textarea id="freightTotals" placeholder="e.g. 12.50\n7.25" rows="4" style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:0.5rem; font-size:1rem;"></textarea>
+  <button onclick="sumAndShow('freightTotals','freightSum')">Sum Freight Totals</button>
+  <div class="result" id="freightSum">Freight Total: $0.0000</div>
+
+  <button style="background:#10b981; margin-top:1rem;" onclick="checkAll()">Check all totals</button>
+  <div class="result" id="totalsResult" style="background:#ecfdf5; white-space:pre-wrap;">Combined Results will appear here.</div>
+
+  <div class="result" id="result">Freight for PO: $0.0000</div>
 
   <script>
+    // Parse a pasted blob of text into numbers. Accepts newlines, commas, semicolons, spaces.
+    function parseNumbers(text) {
+      if (!text) return [];
+      // Split on newlines, commas, semicolons
+      const parts = text.split(/\n|,|;/).flatMap(p => p.split(/\s+/));
+      const nums = parts
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+        .map(s => s.replace(/\$/g, '').replace(/,/g, ''))
+        .map(s => parseFloat(s))
+        .filter(n => !Number.isNaN(n));
+      return nums;
+    }
+
+    function sumArray(arr) {
+      return arr.reduce((a, b) => a + b, 0);
+    }
+
+    function formatMoney4(num) {
+      return num.toFixed(4);
+    }
+
+    // Sum the contents of a textarea and show in a result div
+    function sumAndShow(textareaId, resultDivId) {
+      const text = document.getElementById(textareaId).value;
+      const nums = parseNumbers(text);
+      const total = sumArray(nums);
+      const resultDiv = document.getElementById(resultDivId);
+      // Determine label by id
+      let label = '';
+      if (resultDivId === 'poSum') label = 'PO Total: $';
+      else if (resultDivId === 'taxSum') label = 'Tax Total: $';
+      else if (resultDivId === 'freightSum') label = 'Freight Total: $';
+      else label = '';
+      resultDiv.innerText = label + formatMoney4(total);
+      return total;
+    }
+
+    // Compute the freight calculation already present in the sheet
     function calculateFreight() {
       const totalTax = parseFloat(document.getElementById('totalTax').value) || 0;
       const salesTax = parseFloat(document.getElementById('salesTax').value) || 0;
@@ -76,6 +136,16 @@
       const freightForPO = (totalTax / salesTax) * freightInvoice;
       document.getElementById('result').innerText =
         'Freight for PO: $' + freightForPO.toFixed(4);
+    }
+
+    // Check all three textareas and show combined results
+    function checkAll() {
+      const poTotal = sumAndShow('poTotals', 'poSum');
+      const taxTotal = sumAndShow('taxTotals', 'taxSum');
+      const freightTotal = sumAndShow('freightTotals', 'freightSum');
+
+      const totalsEl = document.getElementById('totalsResult');
+      totalsEl.innerText = `PO: $${formatMoney4(poTotal)}\nTax: $${formatMoney4(taxTotal)}\nFreight: $${formatMoney4(freightTotal)}`;
     }
   </script>
 </body>
